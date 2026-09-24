@@ -74,99 +74,96 @@ export default function TeachingMode({
   const winner = result ? optionById(result.choice) : undefined;
 
   return (
-    <div ref={card} className="scroll-mt-4 overflow-hidden rounded-3xl border border-yellow-300/30 bg-slate-900/80">
+    <div ref={card} className="scroll-mt-4 border-4 border-black">
       {result?.mock && step >= 5 && <MockBanner />}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-6 py-4">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-yellow-300">Teaching Mode · step {step + 1} of {STEPS.length}</p>
-        <ol className="flex gap-1.5" aria-label="Progress">
+      <div className="flex items-center justify-between gap-3 border-b-4 border-black px-5 py-3">
+        <p className="font-bold">
+          Teaching Mode: step {step + 1} of {STEPS.length}
+        </p>
+        <ol className="flex gap-1" aria-label="Progress">
           {STEPS.map((s, i) => (
-            <li key={s} className={`h-2 w-7 rounded-full ${i <= step ? "bg-yellow-300" : "bg-white/10"}`} />
+            <li key={s} className={`h-3 w-5 border-2 border-black ${i <= step ? "bg-black" : "bg-white"}`} />
           ))}
         </ol>
       </div>
 
-      <div className="grid min-h-[26rem] gap-8 p-6 sm:p-10 lg:grid-cols-[minmax(0,18rem)_1fr]">
+      <div className="grid min-h-[26rem] gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,17rem)_1fr]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image}
           alt="The uploaded profile picture"
-          className={`mx-auto aspect-square w-full max-w-72 rounded-2xl object-cover ring-4 transition ${step === 0 ? "ring-yellow-300" : "ring-white/10"}`}
+          className={`mx-auto aspect-square w-full max-w-64 object-cover ${step === 0 ? "outline-8 outline-yellow-300" : ""} border-4 border-black`}
         />
         <div className="min-w-0">
-          <h3 className="font-display text-3xl leading-tight text-white sm:text-4xl">{STEPS[step]}</h3>
+          <h3 className="meme text-3xl sm:text-4xl">{STEPS[step]}</h3>
 
-          <div className="mt-6 space-y-5 text-lg text-slate-300">
+          <div className="mt-6 space-y-5 text-xl leading-relaxed">
             {step === 0 && (
               <p>
-                This is the <b className="text-white">state</b>: the thing the question is about. It goes to the model as pixels. Nobody writes a caption for it, and no model writes one either.
+                This is the <b>state</b>, the thing the question is about. It goes to the model as pixels. Nobody writes a caption for it, and no model writes one either.
               </p>
             )}
 
             {step >= 1 && step <= 3 && (
-              <div className={step === 1 ? "" : "opacity-60"}>
-                <p className="text-sm uppercase tracking-wider text-slate-500">Question</p>
-                <p className="mt-1 text-2xl text-white">“{QUESTION}”</p>
+              <div className={step === 1 ? "" : "text-neutral-400"}>
+                <p className="text-sm font-bold">Question</p>
+                <p className="text-2xl">&ldquo;{QUESTION}&rdquo;</p>
               </div>
             )}
 
             {step >= 2 && step <= 3 && (
-              <div className={step === 2 ? "" : "opacity-60"}>
-                <p className="text-sm uppercase tracking-wider text-slate-500">Choices, written by us</p>
+              <div className={step === 2 ? "" : "text-neutral-400"}>
+                <p className="text-sm font-bold">Choices (we wrote these)</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {OPTIONS.map((o) => (
-                    <span key={o.id} className="rounded-xl border-2 px-3 py-1.5 font-mono text-base text-white" style={{ borderColor: o.color }}>
-                      {o.emoji} {o.id}
+                    <span key={o.id} className={`border-2 px-3 py-1 font-mono text-lg ${step === 2 ? "border-black" : "border-neutral-300"}`}>
+                      {o.id}
                     </span>
                   ))}
                 </div>
                 {step === 2 && (
                   <p className="mt-4">
-                    Four options. Not a vocabulary of 150,000 tokens, not free text. The model will produce exactly one number for each of these, and nothing else. It cannot answer “dinosaur”.
+                    Four options. Not a 150,000-token vocabulary, not free text. The model produces exactly one number for each of these and nothing else. It can&apos;t answer &ldquo;dinosaur&rdquo;.
                   </p>
                 )}
               </div>
             )}
 
             {step >= 4 && (
-              <p className="text-sm text-slate-500">
-                “{QUESTION}” ·{" "}
-                {OPTIONS.map((o) => (
-                  <code key={o.id} className="mr-1.5 rounded border border-white/15 px-1.5 py-0.5 text-slate-300">
-                    {o.id}
-                  </code>
-                ))}
+              <p className="text-base text-neutral-500">
+                &ldquo;{QUESTION}&rdquo; {OPTIONS.map((o) => o.id).join(" / ")}
               </p>
             )}
 
             {step === 3 && (
               <div className="space-y-4">
                 <p>
-                  One HTTP request: <code className="text-base text-emerald-300">{"{ state: {image}, questions: {archetype: {type: \"choice\", criteria: {…4 options…}}} }"}</code>. One forward pass over image + question + options.
+                  One HTTP request with the image, the question and the four options. One forward pass over all of it.
                 </p>
                 {(status === "idle" || status === "error") && (
-                  <button type="button" onClick={onSend} className="rounded-2xl bg-yellow-300 px-6 py-3 text-lg font-bold text-black hover:bg-yellow-200">
-                    {status === "error" ? "Try again →" : "Send to Circuit-VL →"}
+                  <button type="button" onClick={onSend} className="border-4 border-black bg-yellow-300 px-5 py-2 text-xl font-bold hover:bg-black hover:text-yellow-300">
+                    {status === "error" ? "Try again" : "Send to Circuit-VL"}
                   </button>
                 )}
                 {status === "loading" && (
-                  <p className="animate-pulse text-yellow-200">
-                    Waiting on Circuit-VL… {elapsed}s{elapsed > 6 && " (a scale-to-zero GPU may be waking up; the first call can take about a minute)"}
+                  <p>
+                    Waiting on Circuit-VL&hellip; {elapsed}s{elapsed > 6 && " (the GPU may be waking up; the first call can take about a minute)"}
                   </p>
                 )}
-                {status === "done" && <p className="text-emerald-300">Answer received. Next →</p>}
-                {status === "error" && <p className="text-red-300">{error}</p>}
+                {status === "done" && <p className="font-bold">Answer received. Next.</p>}
+                {status === "error" && <p className="text-red-700">{error}</p>}
               </div>
             )}
 
             {step === 4 && result && (
               <div className="space-y-4">
                 <p>
-                  There was no instruction like <i>“respond with one of architect, apple_guy, femboy, furry”</i>, no JSON mode, no parser. The response carries{" "}
-                  <b className="font-mono text-white">output_tokens: {result.outputTokens ?? 0}</b>.
+                  No &ldquo;respond with one of architect, apple_guy, femboy, furry&rdquo;. No JSON mode. No parser. The response says{" "}
+                  <code className="bg-yellow-200 px-1 font-mono">output_tokens: {result.outputTokens ?? 0}</code>.
                 </p>
                 <p>
-                  Inside the model, a small <b className="text-white">pointer head</b> compared the hidden state at the end of the sequence (a “decide” token) with the hidden state at the end of each
-                  option, producing one score per option.
+                  Inside the model, a small <b>pointer head</b> compared the hidden state at the end of the sequence (the &ldquo;decide&rdquo; token) with the hidden state at the end of each
+                  option. That gives one score per option.
                 </p>
               </div>
             )}
@@ -174,18 +171,18 @@ export default function TeachingMode({
             {step === 5 && result && (
               <div>
                 <ProbabilityBars probabilities={result.probabilities} winner={result.choice} size="lg" />
-                <p className="mt-5 text-base">A softmax over four scores. These are the actual numbers from the response, not a rendering of generated text.</p>
+                <p className="mt-5 text-lg">Softmax over four scores. These are the actual numbers from the response, not generated text.</p>
               </div>
             )}
 
             {step === 6 && result && (
               <div>
-                <p className="font-display text-5xl text-white sm:text-6xl">
+                <p className="meme text-5xl sm:text-6xl">
                   {winner?.emoji} {winner?.label.toUpperCase()}
                 </p>
-                <p className="mt-4 text-xl italic text-yellow-200">“{message}”</p>
-                <p className="mt-6 text-base">
-                  The decision is the argmax of the distribution. In a real system, code would decide what to do with it: act above a threshold, send it to a human when the top two are close.
+                <p className="mt-4 text-2xl">&ldquo;{message}&rdquo;</p>
+                <p className="mt-6 text-lg">
+                  The decision is just the highest probability. In a real system, code decides what to do with it: act above a threshold, send it to a person when the top two are close.
                 </p>
               </div>
             )}
@@ -193,18 +190,18 @@ export default function TeachingMode({
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-white/10 px-6 py-4">
-        <button type="button" onClick={back} disabled={step === 0} className="rounded-xl px-4 py-2 text-slate-300 hover:bg-white/5 disabled:opacity-30">
-          ← Back
+      <div className="flex items-center justify-between border-t-4 border-black px-5 py-3">
+        <button type="button" onClick={back} disabled={step === 0} className="px-2 py-1 font-bold disabled:opacity-30">
+          &larr; Back
         </button>
-        <p className="hidden text-xs text-slate-500 sm:block">Arrow keys or a presentation clicker work too</p>
+        <p className="hidden text-sm text-neutral-500 sm:block">Arrow keys and presentation clickers work</p>
         <button
           type="button"
           onClick={next}
           disabled={!(canAdvance || (step === 3 && status !== "loading"))}
-          className="rounded-xl bg-white/10 px-4 py-2 font-semibold text-white hover:bg-white/20 disabled:opacity-30"
+          className="border-2 border-black px-3 py-1 font-bold hover:bg-black hover:text-white disabled:opacity-30"
         >
-          {step === 3 && status !== "done" ? "Send →" : "Next →"}
+          {step === 3 && status !== "done" ? "Send" : "Next"} &rarr;
         </button>
       </div>
     </div>

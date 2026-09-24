@@ -6,23 +6,20 @@ import { pickMessage } from "@/config/messages";
 import { classifyImage, ClassifyFailure, fileToDataUri } from "@/lib/classifyImage";
 import type { DecisionResult, ServiceInfo } from "@/lib/types";
 
+import MemeGrid from "./MemeGrid";
+import MockBanner from "./MockBanner";
 import NerdMode from "./NerdMode";
 import ResultCard from "./ResultCard";
 import TeachingMode from "./TeachingMode";
-import Uploader from "./Uploader";
 
 type Status = "idle" | "loading" | "done" | "error";
 
-function Toggle({ on, onChange, label, hint }: { on: boolean; onChange: (v: boolean) => void; label: string; hint: string }) {
+function Check({ on, onChange, label, hint }: { on: boolean; onChange: (v: boolean) => void; label: string; hint: string }) {
   return (
-    <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 hover:border-white/20">
-      <span className={`relative h-6 w-11 shrink-0 rounded-full transition ${on ? "bg-yellow-300" : "bg-white/15"}`}>
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? "left-[1.375rem]" : "left-0.5"}`} />
-      </span>
-      <input type="checkbox" className="sr-only" checked={on} onChange={(e) => onChange(e.target.checked)} />
+    <label className="flex cursor-pointer items-start gap-2">
+      <input type="checkbox" className="mt-1 h-4 w-4 accent-black" checked={on} onChange={(e) => onChange(e.target.checked)} />
       <span>
-        <span className="block font-semibold text-white">{label}</span>
-        <span className="block text-xs text-slate-400">{hint}</span>
+        <span className="font-bold">{label}</span> <span className="text-neutral-600">{hint}</span>
       </span>
     </label>
   );
@@ -76,7 +73,7 @@ export default function Demo() {
     try {
       uri = await fileToDataUri(f);
     } catch (e) {
-      setError(`could not read that image: ${String(e)}`);
+      setError(`Could not read that image: ${String(e)}`);
       setStatus("error");
       return;
     }
@@ -91,62 +88,75 @@ export default function Demo() {
     setStatus("idle");
   };
 
+  const showTeaching = teaching && image;
+
   return (
-    <div className="space-y-6">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Toggle on={teaching} onChange={setTeaching} label="Teaching Mode" hint="Walk through the seven stages one at a time. Built for a projector." />
-        <Toggle on={nerd} onChange={setNerd} label="Nerd Mode" hint="Show the sequence, the scores, the raw request and response." />
+    <div>
+      <div className="mb-6 space-y-1.5">
+        <Check on={teaching} onChange={setTeaching} label="Teaching Mode" hint="walk through it one step at a time (for a projector)" />
+        <Check on={nerd} onChange={setNerd} label="Nerd Mode" hint="show the token sequence, the scores, and the raw request and response" />
       </div>
 
       {info?.mode === "mock" && (
-        <p className="rounded-xl border border-yellow-300/40 bg-yellow-300/10 px-4 py-2 text-sm text-yellow-200">Server is in mock mode (CIRCUIT_MOCK=1). No model is called; results are clearly marked.</p>
+        <div className="mb-4">
+          <MockBanner />
+        </div>
       )}
       {info && info.mode === "hosted" && !info.hasApiKey && (
-        <p className="rounded-xl border border-red-400/40 bg-red-400/10 px-4 py-2 text-sm text-red-200">
-          CIRCUIT_API_KEY is not set on the server. Get a free key at decisioncircuits.com and put it in <code>.env.local</code> (see the README).
+        <p className="mb-4 border-l-4 border-red-600 pl-3 text-red-700">
+          CIRCUIT_API_KEY isn&apos;t set on the server. Get a free key at decisioncircuits.com and put it in <code>.env.local</code>.
         </p>
       )}
 
-      {!image && <Uploader onFile={onFile} />}
-
-      {image && teaching && (
+      {showTeaching ? (
         <TeachingMode key={run} image={image} status={status} result={result} error={error} message={message} elapsed={elapsed} onSend={() => send(image)} />
-      )}
-
-      {image && !teaching && status === "loading" && (
-        <div className="flex items-center gap-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={image} alt="" className="h-24 w-24 rounded-xl object-cover opacity-70" />
-          <div>
-            <p className="animate-pulse text-lg font-semibold text-white">Circuit-VL is scoring four options… {elapsed}s</p>
-            <p className="text-sm text-slate-400">
-              {elapsed > 6 ? "The hosted GPU scales to zero. A cold start takes about a minute; warm calls are well under a second." : "One forward pass. No tokens to generate."}
+      ) : (
+        <>
+          <MemeGrid image={image} result={status === "done" ? result : null} loading={status === "loading"} onFile={onFile} />
+          {status === "loading" && (
+            <p className="mt-4 text-lg">
+              Circuit-VL is scoring four options&hellip; {elapsed}s
+              <span className="block text-sm text-neutral-600">
+                {elapsed > 6 ? "The hosted GPU scales to zero, so a cold start takes about a minute. Warm calls take well under a second." : "One forward pass. Nothing to generate."}
+              </span>
             </p>
-          </div>
-        </div>
+          )}
+          {status === "done" && result && (
+            <>
+              {result.mock && (
+                <div className="mt-4">
+                  <MockBanner />
+                </div>
+              )}
+              <ResultCard result={result} message={message} />
+            </>
+          )}
+        </>
       )}
-
-      {image && !teaching && status === "done" && result && <ResultCard image={image} result={result} message={message} />}
 
       {status === "error" && !teaching && (
-        <div className="rounded-2xl border border-red-400/40 bg-red-400/10 p-5 text-red-200">
-          <p className="font-semibold">No decision. We will not make one up.</p>
-          <p className="mt-1 text-sm">{error}</p>
+        <div className="mt-4 border-l-4 border-red-600 pl-3 text-red-700">
+          <p className="font-bold">No decision. We won&apos;t make one up.</p>
+          <p className="text-sm">{error}</p>
         </div>
       )}
 
-      {image && nerd && result && status === "done" && <NerdMode key={result.requestId ?? run} image={image} result={result} />}
-
       {image && (
-        <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={reset} className="rounded-xl border border-white/15 px-4 py-2 text-sm font-semibold text-white hover:bg-white/5">
+        <div className="mt-5 flex gap-3">
+          <button type="button" onClick={reset} className="border-2 border-black px-3 py-1.5 font-bold hover:bg-black hover:text-white">
             Try another PFP
           </button>
           {status === "error" && (
-            <button type="button" onClick={() => send(image)} className="rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/20">
+            <button type="button" onClick={() => send(image)} className="border-2 border-black px-3 py-1.5 font-bold hover:bg-black hover:text-white">
               Retry
             </button>
           )}
+        </div>
+      )}
+
+      {image && nerd && result && status === "done" && (
+        <div className="mt-10">
+          <NerdMode key={result.requestId ?? run} image={image} result={result} />
         </div>
       )}
     </div>

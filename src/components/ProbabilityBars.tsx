@@ -10,33 +10,26 @@ export default function ProbabilityBars({
   winner?: string;
   size?: "md" | "lg";
 }) {
-  const rows = sortedEntries(probabilities);
   const big = size === "lg";
   return (
-    <ul className={big ? "space-y-4" : "space-y-2.5"} aria-label="Probability per option">
-      {rows.map(([id, p]) => {
-        const opt = optionById(id) ?? OPTIONS[0];
-        const isWinner = id === winner;
-        return (
-          <li key={id} className="grid grid-cols-[7.5rem_1fr_4rem] items-center gap-3 sm:grid-cols-[9rem_1fr_4.5rem]">
-            <span className={`truncate font-medium ${big ? "text-lg" : "text-sm"} ${isWinner ? "text-white" : "text-slate-400"}`}>
-              <span aria-hidden className="mr-1.5">
-                {opt.emoji}
-              </span>
-              {opt.label}
-            </span>
-            <span className={`relative block overflow-hidden rounded-full bg-white/5 ${big ? "h-6" : "h-4"}`}>
-              <span
-                className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-700 ease-out"
-                style={{ width: `${Math.max(p * 100, 0.5)}%`, background: opt.color, opacity: isWinner ? 1 : 0.55 }}
-              />
-            </span>
-            <span className={`text-right font-mono tabular-nums ${big ? "text-lg" : "text-sm"} ${isWinner ? "text-white" : "text-slate-400"}`}>
-              {pct(p, p < 0.01 ? 1 : 0)}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+    <table className={`w-full border-collapse ${big ? "text-xl" : "text-base"}`} aria-label="Probability per option">
+      <tbody>
+        {sortedEntries(probabilities).map(([id, p]) => {
+          const opt = optionById(id) ?? OPTIONS[0];
+          const isWinner = id === winner;
+          return (
+            <tr key={id} className={isWinner ? "font-bold" : "text-neutral-600"}>
+              <td className="w-32 py-1 pr-3 whitespace-nowrap sm:w-40">{opt.label}</td>
+              <td className="py-1">
+                <div className={`border border-black ${big ? "h-7" : "h-5"}`}>
+                  <div className={`h-full ${isWinner ? "bg-black" : "bg-neutral-400"}`} style={{ width: `${Math.max(p * 100, 0.4)}%` }} />
+                </div>
+              </td>
+              <td className="w-20 py-1 pl-3 text-right font-mono tabular-nums">{pct(p, p < 0.01 ? 1 : 0)}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }

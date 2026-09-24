@@ -3,9 +3,10 @@ import GenerationRace from "./GenerationRace";
 function Section({ id, n, title, children }: { id: string; n: string; title: string; children: React.ReactNode }) {
   return (
     <section id={id} className="scroll-mt-8">
-      <p className="font-mono text-sm text-violet-300">{n}</p>
-      <h3 className="mt-1 text-2xl font-bold text-white sm:text-3xl">{title}</h3>
-      <div className="prose-edu mt-5 space-y-4">{children}</div>
+      <h3 className="meme text-2xl sm:text-3xl">
+        {n}. {title}
+      </h3>
+      <div className="doc mt-4 space-y-4">{children}</div>
     </section>
   );
 }
@@ -13,19 +14,15 @@ function Section({ id, n, title, children }: { id: string; n: string; title: str
 function Diagram({ children, caption }: { children: string; caption?: string }) {
   return (
     <figure className="my-6">
-      <pre className="overflow-x-auto rounded-2xl border border-white/10 bg-black/50 p-5 font-mono text-[13px] leading-snug text-slate-200">{children}</pre>
-      {caption && <figcaption className="mt-2 text-xs text-slate-500">{caption}</figcaption>}
+      <pre className="overflow-x-auto border-2 border-black bg-neutral-50 p-4 font-mono text-[13px] leading-snug">{children}</pre>
+      {caption && <figcaption className="mt-1 text-sm text-neutral-500">{caption}</figcaption>}
     </figure>
   );
 }
 
-function Callout({ tone = "violet", children }: { tone?: "violet" | "yellow" | "red"; children: React.ReactNode }) {
-  const tones = {
-    violet: "border-violet-400/40 bg-violet-400/10 text-violet-100",
-    yellow: "border-yellow-300/40 bg-yellow-300/10 text-yellow-100",
-    red: "border-red-400/40 bg-red-400/10 text-red-100",
-  };
-  return <div className={`rounded-2xl border px-5 py-4 ${tones[tone]}`}>{children}</div>;
+function Callout({ tone = "plain", children }: { tone?: "plain" | "yellow" | "red"; children: React.ReactNode }) {
+  const tones = { plain: "border-black", yellow: "border-yellow-400 bg-yellow-50", red: "border-red-600 bg-red-50" };
+  return <div className={`border-l-8 py-2 pr-3 pl-4 ${tones[tone]}`}>{children}</div>;
 }
 
 const USE_CASES = [
@@ -49,32 +46,31 @@ const REFS: [string, string, string][] = [
 
 export default function Education() {
   return (
-    <div className="space-y-20">
+    <div className="space-y-14">
       <header>
-        <p className="font-mono text-sm uppercase tracking-[0.3em] text-yellow-300">The actual point of this website</p>
-        <h2 className="font-display mt-3 text-4xl text-white sm:text-5xl">Okay, but what actually happened?</h2>
-        <p className="mt-5 max-w-3xl text-lg text-slate-300">
+        <h2 className="meme text-4xl sm:text-5xl">Okay, but what actually happened?</h2>
+        <p className="mt-4 max-w-3xl text-lg">
           You uploaded a picture and got four numbers back. The joke is the categories. The interesting part is that no text was generated anywhere. This section explains what that means, why
           it is different from asking an LLM nicely for JSON, and when you might care.
         </p>
-        <nav className="mt-6 flex flex-wrap gap-2 text-sm">
+        <nav className="mt-4 flex flex-wrap gap-x-4 gap-y-1">
           {[
-            ["#llm", "1 · Generative LLMs"],
-            ["#circuit", "2 · Circuit-VL"],
-            ["#difference", "3 · The key difference"],
-            ["#internals", "4 · Inside one request"],
-            ["#why", "5 · Why care"],
-            ["#limitations", "6 · Limitations"],
-            ["#refs", "References"],
+            ["#llm", "1. Generative LLMs"],
+            ["#circuit", "2. Circuit-VL"],
+            ["#difference", "3. The key difference"],
+            ["#internals", "4. Inside one request"],
+            ["#why", "5. Why care"],
+            ["#limitations", "6. Limitations"],
+            ["#refs", "7. References"],
           ].map(([href, label]) => (
-            <a key={href} href={href} className="rounded-full border border-white/15 px-3 py-1 text-slate-300 hover:border-violet-300 hover:text-white">
+            <a key={href} href={href} className="underline">
               {label}
             </a>
           ))}
         </nav>
       </header>
 
-      <Section id="llm" n="01" title="What is a conventional generative LLM?">
+      <Section id="llm" n="1" title="What is a conventional generative LLM?">
         <p>
           A language model reads text as <b>tokens</b>: chunks of a word, a word, a bit of punctuation, each an integer id from a vocabulary of roughly 100,000 to 250,000 entries. Given a
           sequence of tokens, the model outputs a probability for every token in that vocabulary being the <b>next</b> one. That is all it is trained to do: <b>next-token prediction</b>.
@@ -126,7 +122,7 @@ Application decision`}</Diagram>
         </Callout>
       </Section>
 
-      <Section id="circuit" n="02" title="What is Circuit-VL?">
+      <Section id="circuit" n="2" title="What is Circuit-VL?">
         <p>
           <b>circuit-vl-4b</b> is the image member of the <b>Circuit</b> family of open-weights <b>System One</b> models by James Barney. The author defines a System One model as one that
           answers <i>typed questions about a state with calibrated probability distributions, in one forward pass, with no text generation</i>. The name comes from Daniel Kahneman’s{" "}
@@ -196,11 +192,11 @@ p      = softmax(logit / T)          T = calibrated temperature`}</Diagram>
       0.xx       0.xx       0.xx       0.xx`}</Diagram>
       </Section>
 
-      <Section id="difference" n="03" title="The key difference">
+      <Section id="difference" n="3" title="The key difference">
         <div className="grid gap-5 md:grid-cols-2">
-          <div className="rounded-2xl border border-rose-400/30 bg-rose-400/5 p-5">
-            <p className="font-mono text-sm uppercase tracking-widest text-rose-300">Generative VLM</p>
-            <pre className="mt-3 font-mono text-sm leading-7 text-slate-200">{`IMAGE
+          <div className="border-2 border-black p-4">
+            <p className="font-bold">Generative VLM</p>
+            <pre className="mt-2 font-mono text-sm leading-7">{`IMAGE
   ↓
 MODEL
   ↓
@@ -212,9 +208,9 @@ PARSE ANSWER
   ↓
 DECISION`}</pre>
           </div>
-          <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-5">
-            <p className="font-mono text-sm uppercase tracking-widest text-emerald-300">Circuit-VL</p>
-            <pre className="mt-3 font-mono text-sm leading-7 text-slate-200">{`IMAGE + QUESTION + OPTIONS
+          <div className="border-2 border-black bg-yellow-50 p-4">
+            <p className="font-bold">Circuit-VL</p>
+            <pre className="mt-2 font-mono text-sm leading-7">{`IMAGE + QUESTION + OPTIONS
   ↓
 MODEL
   ↓
@@ -225,52 +221,52 @@ PROBABILITY DISTRIBUTION
 DECISION`}</pre>
           </div>
         </div>
-        <p className="font-display py-4 text-center text-4xl text-white sm:text-5xl">
-          <span className="text-rose-300">Generation</span> vs. <span className="text-emerald-300">Decision</span>
+        <p className="meme py-4 text-center text-4xl sm:text-5xl">
+          <span>Generation</span> vs. <span>Decision</span>
         </p>
         <GenerationRace />
         <div className="overflow-x-auto">
           <table className="mt-4 w-full min-w-[40rem] text-left text-sm">
-            <thead className="text-xs uppercase tracking-wider text-slate-500">
+            <thead className="border-b-2 border-black text-sm">
               <tr>
                 <th className="py-2 pr-4" />
                 <th className="py-2 pr-4">Generative VLM + “return JSON”</th>
                 <th className="py-2">Circuit-VL</th>
               </tr>
             </thead>
-            <tbody className="text-slate-300 [&_td]:border-t [&_td]:border-white/10 [&_td]:py-3 [&_td]:pr-4 [&_td]:align-top">
+            <tbody className="[&_td]:border-t [&_td]:border-neutral-300 [&_td]:py-2 [&_td]:pr-4 [&_td]:align-top">
               <tr>
-                <td className="font-semibold text-white">Output</td>
+                <td className="font-bold">Output</td>
                 <td>Any sequence of tokens</td>
                 <td>One probability per supplied option</td>
               </tr>
               <tr>
-                <td className="font-semibold text-white">Where options live</td>
+                <td className="font-bold">Where options live</td>
                 <td>In the prompt, as a request</td>
                 <td>In the input, as the only things the head can score</td>
               </tr>
               <tr>
-                <td className="font-semibold text-white">Invalid answers</td>
+                <td className="font-bold">Invalid answers</td>
                 <td>Possible; you parse, validate, retry</td>
                 <td>Not representable</td>
               </tr>
               <tr>
-                <td className="font-semibold text-white">Confidence</td>
+                <td className="font-bold">Confidence</td>
                 <td>Stated (uncalibrated) or read from token log-probs</td>
                 <td>The softmax itself, trained for calibration</td>
               </tr>
               <tr>
-                <td className="font-semibold text-white">Forward passes</td>
+                <td className="font-bold">Forward passes</td>
                 <td>1 prefill + 1 per output token</td>
                 <td>1 (output_tokens: 0)</td>
               </tr>
               <tr>
-                <td className="font-semibold text-white">Can explain itself in words</td>
+                <td className="font-bold">Can explain itself in words</td>
                 <td>Yes (whether the explanation is faithful is another matter)</td>
                 <td>No. You can measure what moves it, not ask it</td>
               </tr>
               <tr>
-                <td className="font-semibold text-white">Open-ended questions</td>
+                <td className="font-bold">Open-ended questions</td>
                 <td>Yes</td>
                 <td>No: you must know the options up front</td>
               </tr>
@@ -286,7 +282,7 @@ DECISION`}</pre>
         </Callout>
       </Section>
 
-      <Section id="internals" n="04" title="Show what happens internally">
+      <Section id="internals" n="4" title="Show what happens internally">
         <p>
           Turn on <b>Nerd Mode</b> above and upload a picture. For one real request you will see:
         </p>
@@ -318,16 +314,16 @@ DECISION`}</pre>
         </p>
       </Section>
 
-      <Section id="why" n="05" title="Why would anyone care?">
+      <Section id="why" n="5" title="Why would anyone care?">
         <p>Swap the joke for a real label set and the architecture is the same:</p>
-        <div className="grid gap-3">
+        <div className="grid">
           {USE_CASES.map((u) => (
-            <div key={u.domain} className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3">
-              <span className="w-48 font-semibold text-white">{u.domain}</span>
-              <span className="text-slate-400">{u.state} →</span>
-              <span className="flex flex-wrap gap-1.5">
+            <div key={u.domain} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-neutral-300 py-2">
+              <span className="w-48 font-bold">{u.domain}</span>
+              <span className="text-neutral-600">{u.state} →</span>
+              <span className="flex flex-wrap gap-2 font-mono">
                 {u.options.map((o) => (
-                  <code key={o} className="rounded-md bg-black/40 px-2 py-0.5 text-sm text-slate-200">
+                  <code key={o} className="text-sm">
                     {o}
                   </code>
                 ))}
@@ -381,7 +377,7 @@ DECISION`}</pre>
         </p>
       </Section>
 
-      <Section id="limitations" n="06" title="Limitations (read this one)">
+      <Section id="limitations" n="6" title="Limitations (read this one)">
         <Callout tone="red">
           <p>
             <b>This is a joke classifier on an experimental research model.</b> It classifies the visual presentation of an image into four made-up internet archetypes. It says nothing about who
@@ -423,18 +419,18 @@ DECISION`}</pre>
         </ul>
       </Section>
 
-      <Section id="refs" n="→" title="References and further reading">
+      <Section id="refs" n="7" title="References and further reading">
         <ul className="space-y-3">
           {REFS.map(([title, href, note]) => (
             <li key={href}>
-              <a href={href} className="font-semibold text-violet-300 underline decoration-violet-300/30 underline-offset-4 hover:decoration-violet-300" target="_blank" rel="noreferrer">
+              <a href={href} className="font-bold underline" target="_blank" rel="noreferrer">
                 {title}
               </a>
-              <span className="text-slate-400"> · {note}</span>
+              <span className="text-neutral-600"> · {note}</span>
             </li>
           ))}
         </ul>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-neutral-500">
           Figures on this page come from the circuit-vl-4b model card and from <code>docs/cold-eval.md</code> in the circuit repository (September 2026). The README in this project’s repository
           goes deeper.
         </p>

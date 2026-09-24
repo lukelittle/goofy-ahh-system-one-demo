@@ -1,74 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #07080d;
-  --foreground: #e2e8f0;
-}
+/*
+ * The look is the meme's: white page, black type, a heavy caption headline,
+ * a 2x2 grid with thick black rules. Everything else is a plain document.
+ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-bungee);
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 
 html {
+  background: #fff;
+  color: #111;
   scroll-behavior: smooth;
 }
 
-html,
 body {
-  background-color: var(--background);
+  background: #fff;
+  color: #111;
+  font-family: var(--font-sans);
 }
 
-body {
-  background-image:
-    radial-gradient(60rem 40rem at 10% -10%, rgb(124 58 237 / 0.22), transparent 60%),
-    radial-gradient(50rem 30rem at 100% 0%, rgb(250 204 21 / 0.08), transparent 60%);
-  background-repeat: no-repeat;
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+/* The "The 4 types of IT guys" caption. */
+.meme {
+  font-family: "Arial Black", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
-.font-display {
-  font-family: var(--font-bungee), system-ui, sans-serif;
-  letter-spacing: 0.01em;
-}
-
-.prose-edu {
-  color: rgb(203 213 225);
-  font-size: 1.0625rem;
-  line-height: 1.75;
-}
-.prose-edu b {
+/* Classic meme caption over a photo: white, black outline. */
+.meme-caption {
+  font-family: Impact, "Arial Black", sans-serif;
+  font-weight: 900;
   color: #fff;
-}
-.prose-edu code {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.9em;
-  color: rgb(216 180 254);
-}
-.prose-edu pre code {
-  color: inherit;
+  text-transform: uppercase;
+  -webkit-text-stroke: 1.5px #000;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 0 #000;
 }
 
-/* The hero title wobbles, because of course it does. */
-@keyframes goofy {
-  0%, 100% { transform: rotate(-1.5deg) skewX(-2deg); }
-  50% { transform: rotate(1.5deg) skewX(3deg) scale(1.02); }
+.doc {
+  font-size: 1.0625rem;
+  line-height: 1.65;
 }
-.goofy-wobble {
-  display: inline-block;
-  animation: goofy 2.8s ease-in-out infinite;
+.doc p,
+.doc li {
+  max-width: 72ch;
 }
-@keyframes bob {
-  0%, 100% { transform: translateY(0) rotate(-4deg); }
-  50% { transform: translateY(-10px) rotate(5deg); }
+.doc a {
+  text-decoration: underline;
 }
-.goofy-bob {
-  animation: bob 3.4s ease-in-out infinite;
+.doc code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: #f2f2f2;
+  padding: 0 0.25em;
 }
-@media (prefers-reduced-motion: reduce) {
-  .goofy-wobble, .goofy-bob { animation: none; }
+.doc pre code {
+  background: none;
+  padding: 0;
 }

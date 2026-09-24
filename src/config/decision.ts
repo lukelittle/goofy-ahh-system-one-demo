@@ -27,8 +27,6 @@ export interface ArchetypeOption {
   emoji: string;
   /** Sent to the model as the option's criteria (rendered as "id — description"). */
   description: string;
-  /** Tailwind-safe hex used for this option's bar. */
-  color: string;
 }
 
 export const OPTIONS: ArchetypeOption[] = [
@@ -38,7 +36,6 @@ export const OPTIONS: ArchetypeOption[] = [
     emoji: "🏗️",
     description:
       "Enterprise, cloud or software architect aesthetic: architecture diagrams, cloud or AWS imagery, Kubernetes, terminals, servers and infrastructure, serious corporate engineering headshot energy.",
-    color: "#38bdf8",
   },
   {
     id: "apple_guy",
@@ -46,7 +43,6 @@ export const OPTIONS: ArchetypeOption[] = [
     emoji: "🍎",
     description:
       "Minimalist Apple-style product and design tech aesthetic: MacBook or iPhone imagery, clean minimalist photography, white space, polished product-design energy.",
-    color: "#e5e7eb",
   },
   {
     id: "femboy",
@@ -54,7 +50,6 @@ export const OPTIONS: ArchetypeOption[] = [
     emoji: "🎀",
     description:
       "Cute, feminine or androgynous internet aesthetic: anime-adjacent imagery, pastel colors, cat ears, gaming and internet-culture styling.",
-    color: "#f9a8d4",
   },
   {
     id: "furry",
@@ -62,7 +57,6 @@ export const OPTIONS: ArchetypeOption[] = [
     emoji: "🦊",
     description:
       "Anthropomorphic animal character: a fursona, furry artwork, an animal avatar with human characteristics, fursuits or furry fandom imagery.",
-    color: "#fb923c",
   },
 ];
 

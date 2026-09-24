@@ -84,7 +84,7 @@ GPUs scale to zero and have to wake up. The app retries through that and
 tells you it is doing so. Warm requests take well under a second.
 
 No key and no network? `CIRCUIT_MOCK=1 npm run dev` runs the UI with
-**fake, hash-derived numbers** under a striped "MOCK: NOT Circuit-VL output"
+**fake, hash-derived numbers** under a red "MOCK MODE: NOT Circuit-VL output"
 banner. Do not present mock output as a model result.
 
 ## 3. What is a System One decision model?
@@ -319,7 +319,7 @@ and is trained for the job.
 ```text
 Browser (Next.js client)                      Next.js server                      System One endpoint
 ─────────────────────────                     ──────────────                      ───────────────────
-Uploader ─▶ fileToDataUri()                   POST /api/classify                  POST /v1/systemone
+MemeGrid ─▶ fileToDataUri()                   POST /api/classify                  POST /v1/systemone
             (resize ≤896px, JPEG)             │ validate image data URI           (hosted Circuit API
             │                                 │ buildRequest():                    or local circuit server)
             ▼                                 │   state    = {image}               │
@@ -331,14 +331,14 @@ classifyImage(uri) ──────── JSON ──────────�
                                               │   probs in [0,1], sum to 1
 DecisionResult ◀──────────────────────────── │ adapt to DecisionResult
    │
-   ├─▶ ResultCard / ProbabilityBars
+   ├─▶ MemeGrid (winner panel) / ResultCard / ProbabilityBars
    ├─▶ NerdMode (SequenceView, scores, raw)
    └─▶ TeachingMode (7 steps)
 ```
 
 | File | Role |
 |---|---|
-| `src/config/decision.ts` | The question and the options (ids, descriptions sent to the model, UI labels, colours). |
+| `src/config/decision.ts` | The question and the options (ids, descriptions sent to the model, UI labels). |
 | `src/config/messages.ts` | The jokes. Never sent to the model. |
 | `src/lib/systemone.ts` | **The integration.** Builds the System One request, calls it with retries, validates the answer, adapts it to `DecisionResult`. Server-only. |
 | `src/app/api/classify/route.ts` | The route the browser calls. Keeps the API key on the server. `GET` reports configuration. |
@@ -346,7 +346,7 @@ DecisionResult ◀────────────────────�
 | `src/lib/pointerLayout.ts` | Rebuilds the token sequence for Nerd Mode (teaching only; never sent). |
 | `src/lib/math.ts` | `log p` scores and normalised-entropy confidence. |
 | `src/lib/mock.ts` | Mock mode. Loudly labelled. |
-| `src/components/*` | UI: `Demo`, `Uploader`, `ResultCard`, `ProbabilityBars`, `NerdMode`, `SequenceView`, `TeachingMode`, `Education`, `GenerationRace`, `Mascot`. |
+| `src/components/*` | UI: `Demo`, `MemeGrid` (upload target and result grid), `ResultCard`, `ProbabilityBars`, `NerdMode`, `SequenceView`, `TeachingMode`, `Education`, `GenerationRace`. |
 
 The contract we adapt to (`DecisionResult` in `src/lib/types.ts`):
 
@@ -585,10 +585,8 @@ npm run build
 | `CIRCUIT_URL` | `https://api.decisioncircuits.com/v1/systemone` | Any server speaking `POST /v1/systemone`. |
 | `CIRCUIT_MODEL` | `circuit-vl-4b` | Model name sent in the request. |
 | `CIRCUIT_MOCK` | `0` | `1` = no model call; fake, labelled numbers for UI work. |
-| `NEXT_PUBLIC_HERO_IMAGE` | — | Path under `public/` to replace the mascot (see §14). |
 
-All variables except `NEXT_PUBLIC_HERO_IMAGE` are read on the server only; the
-key never reaches the browser.
+All variables are read on the server only; the key never reaches the browser.
 
 ## 13. Adding new choices
 
@@ -600,7 +598,6 @@ Edit `src/config/decision.ts`:
   label: "Gym Bro",             // UI only
   emoji: "💪",
   description: "Mirror selfie in a gym, visible muscles, tank top, protein shaker.",  // sent to the model
-  color: "#a3e635",
 }
 ```
 
@@ -644,28 +641,22 @@ shipped here):
   cleanly onto `architect` and `apple_guy`, which is a live example of the
   mismatch between an image and its option descriptions.
 
-### The name and the mascot
+### The look
+
+The page is dressed as the meme with the art removed: a white page, the
+heavy black caption "The 4 types of IT guys", and a 2×2 grid of empty panels
+labelled with the four options. The whole grid is the upload target. After a
+decision, your picture fills the winning panel with a classic meme caption,
+and every panel shows its probability. No images ship with the app.
 
 "Goofy ahh" is internet slang (on Twitter since at least 2009, popular on
-TikTok from late 2021). **"Goofy Ahh Pictures"** is a format that took off
-around mid-2023 on TikTok and Reddit: photos distorted with fisheye lenses,
-bizarre perspectives, and extreme close-up selfies. Reference:
-[Know Your Meme: Goofy Ahh Pictures](https://knowyourmeme.com/memes/goofy-ahh-pictures)
-and [Goofy Ahh](https://knowyourmeme.com/memes/goofy-ahh).
+TikTok from late 2021); see
+[Know Your Meme: Goofy Ahh](https://knowyourmeme.com/memes/goofy-ahh). The
+related **"Goofy Ahh Pictures"** format (fisheye, bizarre-perspective photos)
+is where the name comes from, not the design; those images are
+user-submitted and mostly of unknown origin, so none are bundled.
 
-**We did not bundle any meme image.** The images in those galleries are
-user-submitted, of mostly unknown origin, and often show real people; we have
-no licence to redistribute them. Instead the hero uses an **original SVG
-mascot** (`src/components/Mascot.tsx`) drawn from scratch in the general
-spirit of the format: an enormous nose closest to the "lens", tiny far-apart
-eyes, a forehead that goes on forever, a fisheye vignette and an animated
-wobble. It is not a depiction of anyone.
-
-To use your own image instead, put a file you have the rights to in `public/`
-and set `NEXT_PUBLIC_HERO_IMAGE=/your-file.png`.
-
-For **test images**, the same format makes good inputs for the demo itself;
-use your own photos or images you have permission to use.
+For **test images**, use your own photos or images you have permission to use.
 
 ## 15. References / further reading
 

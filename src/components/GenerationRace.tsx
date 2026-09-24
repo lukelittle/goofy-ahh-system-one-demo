@@ -37,41 +37,41 @@ export default function GenerationRace() {
   const decided = tick >= 2;
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-black/40 p-5 sm:p-6">
+    <div className="border-2 border-black p-4">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <p className="text-sm text-slate-400">Illustration only: one tick is one step, not a measured time.</p>
-        <button type="button" onClick={play} className="rounded-xl bg-yellow-300 px-4 py-2 text-sm font-bold text-black hover:bg-yellow-200">
+        <p className="text-sm text-neutral-600">Illustration only: one tick is one step, not a measured time.</p>
+        <button type="button" onClick={play} className="border-2 border-black bg-yellow-300 px-3 py-1 font-bold hover:bg-black hover:text-yellow-300">
           {tick === 0 ? "▶ Play" : "↻ Replay"}
         </button>
       </div>
       <div className="grid gap-5 md:grid-cols-2">
-        <div className="rounded-2xl border border-rose-400/30 bg-rose-400/5 p-4">
-          <p className="font-mono text-xs uppercase tracking-widest text-rose-300">Generative VLM</p>
-          <p className="mt-1 text-xs text-slate-400">prefill, then one forward pass per output token</p>
-          <div className="mt-4 min-h-12 rounded-lg bg-black/50 p-3 font-mono text-sm text-rose-100">
+        <div className="border-2 border-black p-3">
+          <p className="font-bold">Generative VLM</p>
+          <p className="text-sm text-neutral-600">prefill, then one forward pass per output token</p>
+          <div className="mt-3 min-h-12 bg-neutral-100 p-3 font-mono text-sm">
             {emitted.map((t, i) => (
-              <span key={i} className="mr-0.5 rounded bg-rose-400/20 px-0.5">
+              <span key={i} className="mr-0.5 border border-neutral-400 bg-white px-0.5">
                 {t}
               </span>
             ))}
             {!genDone && playing && <span className="animate-pulse">▍</span>}
           </div>
-          <p className="mt-3 font-mono text-xs text-slate-400">
-            steps: {Math.min(emitted.length + (tick > 0 ? 1 : 0), GENERATED.length + 1)} · {parsed ? <span className="text-emerald-300">JSON.parse ✓ · validate ✓ → decision</span> : genDone ? "parsing…" : "generating…"}
+          <p className="mt-3 font-mono text-xs text-neutral-600">
+            steps: {Math.min(emitted.length + (tick > 0 ? 1 : 0), GENERATED.length + 1)} · {parsed ? <span className="font-bold text-black">JSON.parse ✓ · validate ✓ → decision</span> : genDone ? "parsing…" : tick > 0 ? "generating…" : "waiting"}
           </p>
         </div>
-        <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-4">
-          <p className="font-mono text-xs uppercase tracking-widest text-emerald-300">Circuit-VL</p>
-          <p className="mt-1 text-xs text-slate-400">one forward pass over image + question + options</p>
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="border-2 border-black bg-yellow-50 p-3">
+          <p className="font-bold">Circuit-VL</p>
+          <p className="text-sm text-neutral-600">one forward pass over image + question + options</p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {OPTIONS.map((o, i) => (
-              <div key={o.id} className={`rounded-lg border px-2 py-2 text-center font-mono text-xs transition duration-300 ${decided ? "border-emerald-400/50 bg-emerald-400/10 text-white" : "border-white/10 text-slate-500"}`}>
+              <div key={o.id} className={`border-2 px-2 py-2 text-center font-mono text-xs transition duration-300 ${decided ? "border-black bg-white" : "border-neutral-300 text-neutral-400"}`}>
                 {o.id}
-                <div className="mt-1 text-emerald-300">{decided ? `p${"₁₂₃₄"[i]}` : "·"}</div>
+                <div className="mt-1 font-bold">{decided ? `p${"₁₂₃₄"[i]}` : "·"}</div>
               </div>
             ))}
           </div>
-          <p className="mt-3 font-mono text-xs text-slate-400">steps: {tick > 0 ? 1 : 0} · {decided ? <span className="text-emerald-300">softmax → distribution → decision</span> : tick > 0 ? "forward pass…" : "waiting"}</p>
+          <p className="mt-3 font-mono text-xs text-neutral-600">steps: {tick > 0 ? 1 : 0} · {decided ? <span className="font-bold text-black">softmax → distribution → decision</span> : tick > 0 ? "forward pass…" : "waiting"}</p>
         </div>
       </div>
     </div>
