@@ -55,7 +55,7 @@ export default function Home() {
         <a className="underline" href="https://github.com/Barneyjm/decision-circuits">
           decision-circuits
         </a>{" "}
-        System One contract. The mascot is original and not a real person. Not affiliated with the model author.
+        System One contract. Categories inspired by the &ldquo;The 4 types of IT guys&rdquo; meme, which is deliberately not included here. The mascot is original and not a real person. Not affiliated with the model author.
       </footer>
     </main>
   );

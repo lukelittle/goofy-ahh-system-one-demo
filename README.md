@@ -618,6 +618,34 @@ Things to know:
 
 ## 14. Visual identity (and the meme)
 
+### Where the categories come from
+
+The four archetypes come from a meme titled **"The 4 types of IT guys"**:
+a 2×2 grid of four images. We don't know who made it first; it gets passed
+around as a screenshot. The grid has a cartoon nerd, a bearded
+flannel-and-glasses tech guy, an anime femboy character and a photo of
+someone in a fursuit. The demo keeps that joke and turns it into a bounded
+decision. We changed the first two slots to `architect` and `apple_guy`.
+
+**The meme is not in this repo, on purpose.** It combines copyrighted
+cartoon and anime characters, fan art by someone we can't identify, and a
+photo of a real person in their fursuit. We have no right to redistribute
+any of it. Describe it in your talk, or show it from wherever you found it.
+
+It also makes a good test input if you upload it yourself (it is not
+shipped here):
+
+- **Upload the whole grid.** All four archetypes are in one image, and a
+  `choice` question must spread probability over options that all partly
+  apply. See whether the distribution spreads out or the model is
+  overconfident. The Limitations section says to expect overconfidence.
+- **Crop each panel and upload them one at a time.** Each panel should fit
+  one option much better than the others. The two top panels don't map
+  cleanly onto `architect` and `apple_guy`, which is a live example of the
+  mismatch between an image and its option descriptions.
+
+### The name and the mascot
+
 "Goofy ahh" is internet slang (on Twitter since at least 2009, popular on
 TikTok from late 2021). **"Goofy Ahh Pictures"** is a format that took off
 around mid-2023 on TikTok and Reddit: photos distorted with fisheye lenses,
