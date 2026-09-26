@@ -36,3 +36,16 @@ export function pickMessage(optionId: string): string {
   if (!list || list.length === 0) return "";
   return list[Math.floor(Math.random() * list.length)];
 }
+
+/** Discord: the member gets Unclassifiable because the model wasn't sure enough. */
+export const UNSURE_MESSAGES = [
+  "The model looked, shrugged, and returned a very flat distribution.",
+  "Too complex for four boxes. Respect.",
+];
+
+/** Discord: the member still has the default Discord avatar. */
+export const DEFAULT_AVATAR_MESSAGES = ["No PFP, no archetype. Set one and I'll look again."];
+
+export function pickFrom(list: string[]): string {
+  return list[Math.floor(Math.random() * list.length)] ?? "";
+}

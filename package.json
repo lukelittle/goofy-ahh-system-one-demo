@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "bot": "node --env-file-if-exists=.env.local --import tsx bot/index.ts",
+    "bot:register": "node --env-file-if-exists=.env.local --import tsx bot/register.ts",
+    "test": "node --import tsx --test bot/*.test.ts"
   },
   "dependencies": {
+    "discord.js": "^14.27.0",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

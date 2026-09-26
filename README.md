@@ -35,7 +35,8 @@ LLM to reply in JSON", and this repo exists to show and explain the difference.
 12. [Configuration](#12-configuration)
 13. [Adding new choices](#13-adding-new-choices)
 14. [Visual identity (and the meme)](#14-visual-identity-and-the-meme)
-15. [References / further reading](#15-references--further-reading)
+15. [Discord bot](#15-discord-bot)
+16. [References / further reading](#16-references--further-reading)
 
 ---
 
@@ -340,7 +341,8 @@ DecisionResult ◀────────────────────�
 |---|---|
 | `src/config/decision.ts` | The question and the options (ids, descriptions sent to the model, UI labels). |
 | `src/config/messages.ts` | The jokes. Never sent to the model. |
-| `src/lib/systemone.ts` | **The integration.** Builds the System One request, calls it with retries, validates the answer, adapts it to `DecisionResult`. Server-only. |
+| `src/lib/circuit.ts` | **The integration.** Builds the System One request, calls it with retries, validates the answer, adapts it to `DecisionResult`. Shared by the website and the Discord bot. |
+| `src/lib/systemone.ts` | The website's entry point to the same code, marked server-only so it can't end up in a browser bundle. |
 | `src/app/api/classify/route.ts` | The route the browser calls. Keeps the API key on the server. `GET` reports configuration. |
 | `src/lib/classifyImage.ts` | `classifyImage(image): Promise<DecisionResult>` for the UI, plus client-side resizing. |
 | `src/lib/pointerLayout.ts` | Rebuilds the token sequence for Nerd Mode (teaching only; never sent). |
@@ -574,6 +576,7 @@ No key is needed locally: the server accepts any bearer token unless you set
 ```bash
 npm run lint
 npx tsc --noEmit
+npm test          # the Discord bot's decision logic
 npm run build
 ```
 
@@ -658,7 +661,107 @@ user-submitted and mostly of unknown origin, so none are bundled.
 
 For **test images**, use your own photos or images you have permission to use.
 
-## 15. References / further reading
+## 15. Discord bot
+
+The same model, turned into a server role assigner, for friends' servers
+that are in on the joke.
+
+| Event | What the bot does |
+|---|---|
+| Someone joins | Classifies their PFP and gives them **Architect**, **Apple Guy**, **Femboy**, **Furry** or **Unclassifiable**. Then posts a public welcome with the verdict, the model's actual percentages and a joke. |
+| Someone changes their PFP | Classifies it again and swaps the role quietly (server avatars and global avatars both count). |
+| `/trueup` | Admins (Manage Roles). Re-checks every member, fixes wrong or missing roles, removes stale ones, and replies to you alone with a tally. `force:true` re-asks Circuit-VL even about PFPs it has already judged. |
+| `/howitworks` | Posts the generation-vs-decision explainer to the channel. |
+
+**Unclassifiable** means one of two things: the top option was under 50%
+(`MIN_ROLE_PROBABILITY` in `src/config/discord.ts`), or the member has the
+default Discord avatar, in which case the model isn't called at all. That
+threshold is applied by our code, not the model. It's the System One pattern
+in miniature: the model gives a distribution and code makes the decision.
+
+It is the same inference as the website: one `choice` request per avatar,
+built and validated by `src/lib/circuit.ts`. If Circuit-VL is unreachable or
+returns something that doesn't check out, **the bot leaves roles alone**
+rather than guess, and `/trueup` catches up later. Mock mode works too, and
+every welcome message then says it's fake.
+
+A welcome looks like:
+
+```text
+Welcome @newperson. Circuit-VL looked at your PFP.
+🦊 **FURRY** (83%)
+"Enterprise-grade fox detection successful."
+-# furry 83% · femboy 8% · apple_guy 6% · architect 4% · one forward pass, 0 tokens generated
+```
+
+*(Illustrative numbers.)*
+
+**There is no opt-out, by design choice for this server.** Everyone who joins
+gets an archetype stamped on them from their avatar alone. That's the bit on
+a server of friends. Think twice before adding it anywhere else.
+
+### Setup
+
+1. **Create the application** at <https://discord.com/developers/applications>.
+   - *Bot*: reset the token and copy it. Under *Privileged Gateway Intents*,
+     turn on **Server Members Intent** (the bot needs it to see joins and avatar changes).
+   - *General Information*: copy the Application ID.
+2. **Invite it** (replace `APP_ID`). This grants Manage Roles, View Channels,
+   Send Messages and Embed Links:
+
+   ```text
+   https://discord.com/oauth2/authorize?client_id=APP_ID&scope=bot+applications.commands&permissions=268454912
+   ```
+
+3. **Configure** `.env.local`:
+
+   ```bash
+   DISCORD_TOKEN=...
+   DISCORD_CLIENT_ID=...
+   DISCORD_GUILD_ID=...            # optional, makes commands appear instantly in that server
+   DISCORD_WELCOME_CHANNEL_ID=...  # optional, default is the server's system channel
+   CIRCUIT_API_KEY=dc-...          # same as the website
+   DEMO_URL=https://...            # optional, linked from /howitworks
+   ```
+
+4. **Register the commands, then start it:**
+
+   ```bash
+   npm run bot:register
+   npm run bot
+   ```
+
+5. **Role order matters.** The bot creates the five roles on startup if they
+   don't exist. In *Server Settings → Roles*, drag the bot's own role **above**
+   them, or Discord won't let it assign them (the console warns you if so).
+6. Run `/trueup` once to sort everyone who was already in the server.
+
+### Running it for real
+
+The bot is a long-running process (a gateway connection), so it needs
+somewhere that stays up: a small VM, Railway, Fly.io, or a Raspberry Pi.
+Serverless platforms like Vercel won't work for this part. There's a
+container recipe:
+
+```bash
+docker build -f Dockerfile.bot -t goofy-bot .
+docker run -d --restart=unless-stopped --env-file .env.local goofy-bot
+```
+
+### Things to know
+
+- **Rate limit.** The free Circuit tier allows 60 questions a minute, so the
+  bot spaces calls about 1.1 s apart (`CIRCUIT_MIN_INTERVAL_MS`). A `/trueup`
+  on a 500-member server takes roughly ten minutes; it reports progress as it goes.
+- **Cold starts.** The first call after a quiet spell can take about a minute
+  while the hosted GPU wakes up. The bot waits and retries.
+- **Animated avatars** are judged on their first frame.
+- **Results are cached by avatar** in memory, so `/trueup` doesn't re-ask about
+  PFPs it has already seen (until a restart or `force:true`).
+- Change role names, the threshold, or the jokes in `src/config/discord.ts` and
+  `src/config/messages.ts`. Tests: `npm test`.
+
+## 16. References / further reading
 
 Primary sources (the author's):
 

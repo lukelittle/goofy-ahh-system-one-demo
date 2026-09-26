@@ -1,0 +1,10 @@
+# The Discord bot as a long-running container. Pass env vars at runtime
+# (DISCORD_TOKEN, CIRCUIT_API_KEY, ...); nothing secret is baked in.
+FROM node:22-slim
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --ignore-scripts
+COPY tsconfig.json ./
+COPY src ./src
+COPY bot ./bot
+CMD ["node", "--import", "tsx", "bot/index.ts"]
