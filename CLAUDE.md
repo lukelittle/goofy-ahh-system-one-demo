@@ -6,3 +6,4 @@
 - Never show probabilities that did not come from the model. Mock mode (`CIRCUIT_MOCK=1`) must stay visibly labelled.
 - Options and jokes live in `src/config/`. Factual claims about the model must cite the author's model card or repos.
 - The Discord bot (`bot/`) must leave roles alone when Circuit-VL fails; never assign a role from a decision the model didn't make.
+- `deploy/aws/` must stay clean under `terraform fmt -check`, `terraform validate`, `terraform test` and checkov; a new checkov skip needs a reason in the comment. Secrets never enter Terraform variables or state.

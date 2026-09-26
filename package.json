@@ -9,24 +9,26 @@
     "lint": "eslint",
     "bot": "node --env-file-if-exists=.env.local --import tsx bot/index.ts",
     "bot:register": "node --env-file-if-exists=.env.local --import tsx bot/register.ts",
-    "test": "node --import tsx --test bot/*.test.ts"
+    "test": "node --import tsx --test bot/*.test.ts",
+    "build:bot": "esbuild bot/index.ts --bundle --platform=node --target=node22 --format=esm --packages=external --outfile=dist/bot.mjs --log-level=warning"
   },
   "dependencies": {
     "discord.js": "^14.27.0",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "^0.0.1",
-    "tsx": "^4.23.15"
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.25.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

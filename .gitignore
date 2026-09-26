@@ -41,3 +41,16 @@ yarn-error.log*
 next-env.d.ts
 
 !.env.example
+
+# bot bundle
+/dist
+
+# terraform (deploy/aws): state, caches, and the per-deploy tag deploy.sh writes.
+# The provider lock file is not committed: `terraform init` writes one for your platform.
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+deploy/aws/terraform.tfvars
+deploy/aws/image_tag.auto.tfvars

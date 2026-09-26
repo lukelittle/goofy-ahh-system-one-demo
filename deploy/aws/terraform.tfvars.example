@@ -1,0 +1,19 @@
+# Copy to terraform.tfvars and edit. Everything has a default except
+# image_tag, which deploy.sh writes to image_tag.auto.tfvars for you.
+
+aws_region = "us-east-1"
+name       = "goofy-ahh"
+
+# Website on App Runner (true) or bot only (false, e.g. website on Vercel).
+web_enabled = true
+
+# Bot on Fargate Spot (~$3/mo, occasional restarts) or on-demand (~$9/mo).
+bot_use_spot = true
+
+# Optional: channel for welcome messages. Empty = the server's system channel.
+discord_welcome_channel_id = ""
+
+# Cost-only observability, off by default.
+container_insights = false
+flow_logs_enabled  = true
+log_retention_days = 30

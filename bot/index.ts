@@ -5,6 +5,7 @@ import { serviceInfo } from "@/lib/circuit";
 import { classifyMember } from "./classifier";
 import { howItWorksEmbeds } from "./commands";
 import { logLine, roleName, welcomeMessage } from "./decide";
+import { startHealthServer } from "./health";
 import { applyRole, ensureRoles } from "./roles";
 
 /**
@@ -27,6 +28,16 @@ if (!token) {
 
 // GuildMembers is a privileged intent: turn on "Server Members Intent" in the Developer Portal.
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
+
+startHealthServer(client);
+
+// Containers stop with SIGTERM; close the gateway session cleanly instead of timing out.
+for (const sig of ["SIGTERM", "SIGINT"] as const) {
+  process.on(sig, () => {
+    console.log(`${sig}: shutting down`);
+    client.destroy().finally(() => process.exit(0));
+  });
+}
 
 const who = (m: GuildMember) => `[${m.guild.name}] ${m.user.tag}`;
 

@@ -348,6 +348,8 @@ DecisionResult ◀────────────────────�
 | `src/lib/pointerLayout.ts` | Rebuilds the token sequence for Nerd Mode (teaching only; never sent). |
 | `src/lib/math.ts` | `log p` scores and normalised-entropy confidence. |
 | `src/lib/mock.ts` | Mock mode. Loudly labelled. |
+| `bot/*` | The Discord bot: `index.ts` (events, commands), `classifier.ts`, `decide.ts` (+ tests), `roles.ts`, `commands.ts`, `health.ts` (localhost liveness endpoint). |
+| `deploy/aws/*` | Terraform for AWS, `deploy.sh`, `destroy.sh`, and its own README. |
 | `src/components/*` | UI: `Demo`, `MemeGrid` (upload target and result grid), `ResultCard`, `ProbabilityBars`, `NerdMode`, `SequenceView`, `TeachingMode`, `Education`, `GenerationRace`. |
 
 The contract we adapt to (`DecisionResult` in `src/lib/types.ts`):
@@ -571,14 +573,31 @@ No key is needed locally: the server accepts any bearer token unless you set
 `S1_API_KEY` on it, and this app sends a placeholder token when
 `CIRCUIT_API_KEY` is empty.
 
+### In containers
+
+The same two images AWS runs, on your machine:
+
+```bash
+docker compose up --build        # website on http://localhost:3000 + the bot, secrets from .env.local
+```
+
+`Dockerfile` (website, Next standalone output) and `Dockerfile.bot` (a
+bundled bot, no TypeScript at runtime) are multi-stage, non-root, pinned,
+and pass `hadolint` and `checkov`.
+
 ### Checks
 
 ```bash
 npm run lint
 npx tsc --noEmit
 npm test          # the Discord bot's decision logic
-npm run build
+npm run build     # website
+npm run build:bot # bot bundle (what Dockerfile.bot ships)
 ```
+
+The same checks, plus the Dockerfiles, image smoke tests and the Terraform
+(fmt, validate, `terraform test`, checkov), run in GitHub Actions on every
+push: `.github/workflows/ci.yml`.
 
 ## 12. Configuration
 
@@ -739,14 +758,15 @@ a server of friends. Think twice before adding it anywhere else.
 ### Running it for real
 
 The bot is a long-running process (a gateway connection), so it needs
-somewhere that stays up: a small VM, Railway, Fly.io, or a Raspberry Pi.
-Serverless platforms like Vercel won't work for this part. There's a
-container recipe:
+somewhere that stays up. Serverless platforms like Vercel won't work for
+this part. Two ways:
 
-```bash
-docker build -f Dockerfile.bot -t goofy-bot .
-docker run -d --restart=unless-stopped --env-file .env.local goofy-bot
-```
+- **AWS, with Terraform** (website on App Runner, bot on ECS Fargate, about
+  $10/month): `deploy/aws/deploy.sh`. The whole thing, including the
+  security decisions and the cost breakdown, is written up in
+  [`deploy/aws/README.md`](deploy/aws/README.md).
+- **Any box with Docker**: `docker compose up -d --build` runs both
+  containers from `compose.yaml` with secrets from `.env.local`.
 
 ### Things to know
 

@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build
+      - run: npm run build:bot
+      - run: npm audit --omit=dev --audit-level=high
+
+  containers:
+    name: Dockerfiles (hadolint, checkov)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile.bot
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          framework: dockerfile
+          directory: .
+          quiet: true
+      - name: Build both images (no push)
+        run: |
+          docker build -f Dockerfile -t web:ci .
+          docker build -f Dockerfile.bot -t bot:ci .
+      - name: Smoke-test the web image
+        run: |
+          docker run -d --rm --name web -e CIRCUIT_MOCK=1 -p 3000:3000 web:ci
+          for i in $(seq 1 20); do curl -fs http://localhost:3000/api/classify && break; sleep 1; done
+          curl -fs -o /dev/null http://localhost:3000/
+          docker stop web
+      - name: "Smoke-test the bot image (no token, so it must exit with a clear message)"
+        run: |
+          set +e
+          out=$(docker run --rm bot:ci 2>&1); code=$?
+          echo "$out"
+          [ $code -eq 1 ] && echo "$out" | grep -q "DISCORD_TOKEN is not set"
+
+  terraform:
+    name: Terraform (fmt, validate, test, checkov)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: deploy/aws
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.16.4"
+      - run: terraform fmt -check -recursive -diff
+      - run: terraform init -input=false -backend=false
+      - run: terraform validate
+      - run: terraform test
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          framework: terraform
+          directory: deploy/aws
+          quiet: true
