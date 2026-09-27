@@ -31,18 +31,18 @@ export interface ArchetypeOption {
 
 export const OPTIONS: ArchetypeOption[] = [
   {
-    id: "architect",
-    label: "Architect",
-    emoji: "🏗️",
+    id: "neckbeard",
+    label: "Neckbeard",
+    emoji: "🧔",
     description:
-      "Enterprise, cloud or software architect aesthetic: architecture diagrams, cloud or AWS imagery, Kubernetes, terminals, servers and infrastructure, serious corporate engineering headshot energy.",
+      "Greasy, unkempt cartoon-nerd aesthetic: thick glasses, patchy facial hair or neckbeard, gap teeth, a stained t-shirt, basement-dweller energy.",
   },
   {
-    id: "apple_guy",
-    label: "Apple Guy",
-    emoji: "🍎",
+    id: "stressed_dev",
+    label: "Stressed Dev",
+    emoji: "😱",
     description:
-      "Minimalist Apple-style product and design tech aesthetic: MacBook or iPhone imagery, clean minimalist photography, white space, polished product-design energy.",
+      "Frazzled software developer or sysadmin aesthetic: beard and glasses, flannel or plaid shirt over a tech t-shirt, hands on head, wide-eyed production-is-down panic.",
   },
   {
     id: "femboy",

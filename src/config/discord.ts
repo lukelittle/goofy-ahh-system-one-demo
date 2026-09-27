@@ -6,8 +6,8 @@
 
 /** Role names, keyed by option id. The bot creates any that are missing. */
 export const ROLE_NAMES: Record<string, string> = {
-  architect: "Architect",
-  apple_guy: "Apple Guy",
+  neckbeard: "Neckbeard",
+  stressed_dev: "Stressed Dev",
   femboy: "Femboy",
   furry: "Furry",
 };

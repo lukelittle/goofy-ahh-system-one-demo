@@ -26,7 +26,7 @@ export function howItWorksEmbeds(): EmbedBuilder[] {
       .setTitle("How this bot picks your role: Generation vs. Decision")
       .setDescription(
         [
-          "**A normal AI chatbot** would be sent your PFP with a prompt like *\"reply with one of architect, apple_guy, femboy, furry\"*. It generates an answer one token at a time, and then code parses the text and hopes it's one of the four words.",
+          "**A normal AI chatbot** would be sent your PFP with a prompt like *\"reply with one of neckbeard, stressed_dev, femboy, furry\"*. It generates an answer one token at a time, and then code parses the text and hopes it's one of the four words.",
           "",
           "**This bot doesn't do that.** It sends [Circuit-VL](https://huggingface.co/jbarney/circuit-vl-4b) (a 4B vision model) three things:",
           `> **state:** your PFP\n> **question:** "${QUESTION}"\n> **options:** ${options}`,

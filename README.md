@@ -8,7 +8,7 @@ which of four ridiculous internet archetypes the image's visual presentation
 most resembles:
 
 ```
-architect · apple_guy · femboy · furry
+neckbeard · stressed_dev · femboy · furry
 ```
 
 The categories are a joke. The mechanism is the point: **no text is generated
@@ -158,8 +158,8 @@ the chat-template framing is approximate):
 
 Question (pick exactly one option):
 Which archetype best describes the visual presentation of this profile picture?
-<|box_start|>architect — Enterprise, cloud or software architect aesthetic: ...<|box_end|>
-<|box_start|>apple_guy — Minimalist Apple-style product and design tech aesthetic: ...<|box_end|>
+<|box_start|>neckbeard — Greasy, unkempt cartoon-nerd aesthetic: ...<|box_end|>
+<|box_start|>stressed_dev — Frazzled software developer or sysadmin aesthetic: ...<|box_end|>
 <|box_start|>femboy — Cute, feminine or androgynous internet aesthetic: ...<|box_end|>
 <|box_start|>furry — Anthropomorphic animal character: ...<|box_end|>
 <|fim_middle|><|im_end|>
@@ -199,7 +199,7 @@ returns them with the argmax as `choice` and `1 − H(p)/log N` as `confidence`.
           ┌─────────────────┐
           │ Vision Encoder  │   frozen (Qwen3-VL)
           └────────┬────────┘
-                   │  image tokens + question + <opt>architect</opt> … <decide>
+                   │  image tokens + question + <opt>neckbeard</opt> … <decide>
                    ▼
           ┌─────────────────┐
           │ Language Model  │   Qwen3-VL-4B language model
@@ -213,7 +213,7 @@ returns them with the argmax as `choice` and `1 − H(p)/log N` as `confidence`.
                    │  softmax
         ┌──────────┼──────────┬──────────┐
         ▼          ▼          ▼          ▼
-    architect  apple_guy   femboy     furry
+    neckbeard stressed_dev  femboy      furry
       0.xx       0.xx       0.xx       0.xx
 ```
 
@@ -262,7 +262,7 @@ decoding, and then **parse and validate** what comes back:
 Image
    │
    ▼
-Generative VLM ◀── "Please return one of: architect | apple_guy | femboy | furry"
+Generative VLM ◀── "Please return one of: neckbeard | stressed_dev | femboy | furry"
    │
    ▼
 Generated text      {"archetype": "furry"}   or   "Sure! This looks like a furry."
@@ -394,8 +394,8 @@ For one upload:
          "type": "choice",
          "instructions": "Which archetype best describes the visual presentation of this profile picture?",
          "criteria": {
-           "architect": "Enterprise, cloud or software architect aesthetic: ...",
-           "apple_guy": "Minimalist Apple-style product and design tech aesthetic: ...",
+           "neckbeard": "Greasy, unkempt cartoon-nerd aesthetic: ...",
+           "stressed_dev": "Frazzled software developer or sysadmin aesthetic: ...",
            "femboy":    "Cute, feminine or androgynous internet aesthetic: ...",
            "furry":     "Anthropomorphic animal character: ..."
          }
@@ -421,7 +421,7 @@ For one upload:
        "archetype": {
          "type": "choice",
          "choice": "furry",
-         "probabilities": { "architect": 0.02, "apple_guy": 0.06, "femboy": 0.16, "furry": 0.76 },
+         "probabilities": { "neckbeard": 0.02, "stressed_dev": 0.06, "femboy": 0.16, "furry": 0.76 },
          "confidence": 0.52
        }
      },
@@ -478,7 +478,7 @@ accuracy, calibration, latency and cost.
 Swap the joke for a real label set; the architecture does not change.
 
 ```text
-Goofy demo:           PFP                  → [architect, apple_guy, femboy, furry]
+Goofy demo:           PFP                  → [neckbeard, stressed_dev, femboy, furry]
 Document processing:  Document image       → [invoice, contract, purchase_order, other]
 Manufacturing:        Part photo           → [normal, crack, corrosion, deformation]
 Insurance:            Claim image          → [hail, collision, flood, other]
@@ -644,7 +644,8 @@ a 2×2 grid of four images. We don't know who made it first; it gets passed
 around as a screenshot. The grid has a cartoon nerd, a bearded
 flannel-and-glasses tech guy, an anime femboy character and a photo of
 someone in a fursuit. The demo keeps that joke and turns it into a bounded
-decision. We changed the first two slots to `architect` and `apple_guy`.
+decision: `neckbeard` (the cartoon creep, top-left), `stressed_dev` (the
+flannel guy, top-right), `femboy`, `furry`.
 
 **The meme is not in this repo, on purpose.** It combines copyrighted
 cartoon and anime characters, fan art by someone we can't identify, and a
@@ -659,9 +660,9 @@ shipped here):
   apply. See whether the distribution spreads out or the model is
   overconfident. The Limitations section says to expect overconfidence.
 - **Crop each panel and upload them one at a time.** Each panel should fit
-  one option much better than the others. The two top panels don't map
-  cleanly onto `architect` and `apple_guy`, which is a live example of the
-  mismatch between an image and its option descriptions.
+  one option much better than the others. Then edit a description in
+  `src/config/decision.ts` and re-upload: the numbers move, because the
+  descriptions are part of the question.
 
 ### The look
 
@@ -687,7 +688,7 @@ that are in on the joke.
 
 | Event | What the bot does |
 |---|---|
-| Someone joins | Classifies their PFP and gives them **Architect**, **Apple Guy**, **Femboy**, **Furry** or **Unclassifiable**. Then posts a public welcome with the verdict, the model's actual percentages and a joke. |
+| Someone joins | Classifies their PFP and gives them **Neckbeard**, **Stressed Dev**, **Femboy**, **Furry** or **Unclassifiable**. Then posts a public welcome with the verdict, the model's actual percentages and a joke. |
 | Someone changes their PFP | Classifies it again and swaps the role quietly (server avatars and global avatars both count). |
 | `/trueup` | Admins (Manage Roles). Re-checks every member, fixes wrong or missing roles, removes stale ones, and replies to you alone with a tally. `force:true` re-asks Circuit-VL even about PFPs it has already judged. |
 | `/howitworks` | Posts the generation-vs-decision explainer to the channel. |
@@ -710,7 +711,7 @@ A welcome looks like:
 Welcome @newperson. Circuit-VL looked at your PFP.
 🦊 **FURRY** (83%)
 "Enterprise-grade fox detection successful."
--# furry 83% · femboy 8% · apple_guy 6% · architect 4% · one forward pass, 0 tokens generated
+-# furry 83% · femboy 8% · stressed_dev 6% · neckbeard 4% · one forward pass, 0 tokens generated
 ```
 
 *(Illustrative numbers.)*

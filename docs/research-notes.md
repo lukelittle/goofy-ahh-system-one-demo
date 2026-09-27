@@ -54,7 +54,7 @@ The Circuit family: `circuit-1.7b` (Qwen3-1.7B-Base), `circuit-8b`
     "model": "circuit-vl-4b",
     "questions": {"archetype": {"type": "choice",
                                 "instructions": "Which archetype ...?",
-                                "criteria": {"architect": "desc", "apple_guy": "desc", ...}}}}
+                                "criteria": {"neckbeard": "desc", "stressed_dev": "desc", ...}}}}
    ```
    A media state is `{"image": <data URI or URL>, "text"?: caption}`. With no
    caption the server uses `"See the image."` (`split_media_state`). Unknown
@@ -68,8 +68,8 @@ The Circuit family: `circuit-1.7b` (Qwen3-1.7B-Base), `circuit-8b`
 
    Question (pick exactly one option):
    <instructions>
-   <|box_start|>architect — <description><|box_end|>
-   <|box_start|>apple_guy — <description><|box_end|>
+   <|box_start|>neckbeard — <description><|box_end|>
+   <|box_start|>stressed_dev — <description><|box_end|>
    ...
    <|fim_middle|>
    ```
@@ -95,7 +95,7 @@ The Circuit family: `circuit-1.7b` (Qwen3-1.7B-Base), `circuit-8b`
 6. **Response** (`s1proto/service.py` `build_answers`):
    ```json
    {"model": "...", "answers": {"archetype": {"type": "choice", "choice": "furry",
-     "probabilities": {"architect": 0.02, ...}, "confidence": 0.71}},
+     "probabilities": {"neckbeard": 0.02, ...}, "confidence": 0.71}},
     "usage": {"input_tokens": 612, "output_tokens": 0}, "request_id": "..."}
    ```
    `choice` is the argmax. `confidence` is `1 − H(p)/log N`. The service sets

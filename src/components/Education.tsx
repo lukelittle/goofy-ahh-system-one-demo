@@ -26,7 +26,7 @@ function Callout({ tone = "plain", children }: { tone?: "plain" | "yellow" | "re
 }
 
 const USE_CASES = [
-  { domain: "Goofy demo", state: "PFP", options: ["architect", "apple_guy", "femboy", "furry"] },
+  { domain: "Goofy demo", state: "PFP", options: ["neckbeard", "stressed_dev", "femboy", "furry"] },
   { domain: "Document processing", state: "Document image", options: ["invoice", "contract", "purchase_order", "other"] },
   { domain: "Manufacturing", state: "Part photo", options: ["normal", "crack", "corrosion", "deformation"] },
   { domain: "Insurance", state: "Claim image", options: ["hail", "collision", "flood", "other"] },
@@ -105,7 +105,7 @@ generated response (free text)`}</Diagram>
    ▼
 Generative VLM
    │   "Please return one of:
-   │    architect | apple_guy | femboy | furry"
+   │    neckbeard | stressed_dev | femboy | furry"
    ▼
 Generated text      e.g.  {"archetype": "furry"}   or   "Sure! This looks like a furry."
    │
@@ -152,7 +152,7 @@ Application decision`}</Diagram>
         </ul>
         <p>
           <b>How a question is represented.</b> The server writes one sequence: the image, the question text, and then each option wrapped in delimiter tokens,{" "}
-          <code>&lt;|box_start|&gt;architect — description&lt;|box_end|&gt;</code>, one per line, and at the very end a <b>decide token</b>, <code>&lt;|fim_middle|&gt;</code>. These are Qwen
+          <code>&lt;|box_start|&gt;neckbeard — description&lt;|box_end|&gt;</code>, one per line, and at the very end a <b>decide token</b>, <code>&lt;|fim_middle|&gt;</code>. These are Qwen
           reserved tokens that never appear in normal text (user text is sanitized so it can’t forge them).
         </p>
         <p>
@@ -174,7 +174,7 @@ p      = softmax(logit / T)          T = calibrated temperature`}</Diagram>
           ┌─────────────────┐
           │ Vision Encoder  │   frozen (Qwen3-VL)
           └────────┬────────┘
-                   │  image tokens  + question + <opt>architect</opt> … <decide>
+                   │  image tokens  + question + <opt>neckbeard</opt> … <decide>
                    ▼
           ┌─────────────────┐
           │ Language Model  │   Qwen3-VL-4B LM
@@ -188,7 +188,7 @@ p      = softmax(logit / T)          T = calibrated temperature`}</Diagram>
                    │  softmax
         ┌──────────┼──────────┬──────────┐
         ▼          ▼          ▼          ▼
-    architect  apple_guy   femboy     furry
+    neckbeard stressed_dev  femboy      furry
       0.xx       0.xx       0.xx       0.xx`}</Diagram>
       </Section>
 

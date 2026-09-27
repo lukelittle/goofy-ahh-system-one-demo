@@ -35,7 +35,7 @@ export function decideRole(result: DecisionResult | null, opts: { defaultAvatar:
 
 const pct = (p: number) => `${Math.round(p * 100)}%`;
 
-/** "furry 83% · femboy 8% · apple_guy 6% · architect 4%" */
+/** "furry 83% · femboy 8% · stressed_dev 6% · neckbeard 4%" */
 export function distributionLine(result: DecisionResult): string {
   return sortedEntries(result.probabilities)
     .map(([id, p]) => `${id} ${p < 0.01 ? "<1%" : pct(p)}`)

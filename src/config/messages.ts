@@ -4,15 +4,15 @@
  * option; one is picked at random per result.
  */
 export const RESULT_MESSAGES: Record<string, string[]> = {
-  architect: [
+  neckbeard: [
     "Has opinions about whether this should have been an event-driven architecture.",
-    "Will draw a box-and-arrow diagram of your lunch order.",
-    "Has said \"it depends\" in a meeting and meant it as a complete answer.",
+    "Runs Arch, by the way.",
+    "Has corrected a stranger's pronunciation of GIF in the last 30 days.",
   ],
-  apple_guy: [
+  stressed_dev: [
     "Has explained why 8 GB of unified memory is different.",
-    "Owns a dongle for the dongle.",
-    "Calls a laptop \"a joy to use\" without irony.",
+    "It works on their machine. Their machine is on fire.",
+    "Currently reading a 400-comment Jira ticket titled \"quick question\".",
   ],
   femboy: [
     "The CI pipeline has been configured with :3.",
