@@ -5,14 +5,14 @@
  */
 export const RESULT_MESSAGES: Record<string, string[]> = {
   neckbeard: [
-    "Has opinions about whether this should have been an event-driven architecture.",
     "Runs Arch, by the way.",
     "Has corrected a stranger's pronunciation of GIF in the last 30 days.",
+    "Well, actually, the model is a classifier, not an AI.",
   ],
   stressed_dev: [
-    "Has explained why 8 GB of unified memory is different.",
     "It works on their machine. Their machine is on fire.",
     "Currently reading a 400-comment Jira ticket titled \"quick question\".",
+    "Has been \"five minutes from done\" since Tuesday.",
   ],
   femboy: [
     "The CI pipeline has been configured with :3.",

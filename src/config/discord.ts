@@ -12,6 +12,13 @@ export const ROLE_NAMES: Record<string, string> = {
   furry: "Furry",
 };
 
+/**
+ * Role names from earlier versions of this config. On start-up the bot
+ * deletes any of these it finds, which also removes them from every member;
+ * otherwise a rename would leave people holding two archetype roles.
+ */
+export const RETIRED_ROLE_NAMES = ["Architect", "Apple Guy"];
+
 /** The fifth role: low-confidence decisions and default Discord avatars. */
 export const UNCLASSIFIABLE_KEY = "unclassifiable";
 export const UNCLASSIFIABLE_NAME = "Unclassifiable";

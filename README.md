@@ -343,7 +343,7 @@ DecisionResult ◀────────────────────�
 | `src/config/messages.ts` | The jokes. Never sent to the model. |
 | `src/lib/circuit.ts` | **The integration.** Builds the System One request, calls it with retries, validates the answer, adapts it to `DecisionResult`. Shared by the website and the Discord bot. |
 | `src/lib/systemone.ts` | The website's entry point to the same code, marked server-only so it can't end up in a browser bundle. |
-| `src/app/api/classify/route.ts` | The route the browser calls. Keeps the API key on the server. `GET` reports configuration. |
+| `src/app/api/classify/route.ts` | The route the browser calls. Keeps the API key on the server; streams and caps the body, rate-limits per IP and overall, validates the data URI. `GET` reports configuration. |
 | `src/lib/classifyImage.ts` | `classifyImage(image): Promise<DecisionResult>` for the UI, plus client-side resizing. |
 | `src/lib/pointerLayout.ts` | Rebuilds the token sequence for Nerd Mode (teaching only; never sent). |
 | `src/lib/math.ts` | `log p` scores and normalised-entropy confidence. |

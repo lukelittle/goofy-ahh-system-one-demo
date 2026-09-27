@@ -35,14 +35,14 @@ export const OPTIONS: ArchetypeOption[] = [
     label: "Neckbeard",
     emoji: "🧔",
     description:
-      "Greasy, unkempt cartoon-nerd aesthetic: thick glasses, patchy facial hair or neckbeard, gap teeth, a stained t-shirt, basement-dweller energy.",
+      "Greasy cartoon nerd: squinting behind thick glasses, gap teeth, patchy stubble on the neck, stained t-shirt, hunched basement-dweller energy.",
   },
   {
     id: "stressed_dev",
     label: "Stressed Dev",
     emoji: "😱",
     description:
-      "Frazzled software developer or sysadmin aesthetic: beard and glasses, flannel or plaid shirt over a tech t-shirt, hands on head, wide-eyed production-is-down panic.",
+      "Frazzled software developer: flannel or plaid shirt over a tech t-shirt, both hands clutching the head, mouth open in wide-eyed production-is-down panic.",
   },
   {
     id: "femboy",

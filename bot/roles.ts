@@ -1,15 +1,23 @@
 import type { Guild, GuildMember } from "discord.js";
 
-import { HOIST_ROLES } from "@/config/discord";
+import { HOIST_ROLES, RETIRED_ROLE_NAMES } from "@/config/discord";
 
 import { ALL_ROLE_KEYS, roleName, type RoleKey } from "./decide";
 
 /** role key -> role id, per guild. */
 const roleIds = new Map<string, Map<RoleKey, string>>();
 
-/** Find the five archetype roles by name, creating any that are missing. */
+/** Find the five archetype roles by name, creating any that are missing and deleting retired ones. */
 export async function ensureRoles(guild: Guild): Promise<Map<RoleKey, string>> {
   const roles = await guild.roles.fetch();
+  for (const stale of roles.filter((r) => RETIRED_ROLE_NAMES.includes(r.name)).values()) {
+    if (!stale.editable) {
+      console.warn(`[${guild.name}] retired role "${stale.name}" exists but the bot can't delete it; remove it by hand.`);
+      continue;
+    }
+    await stale.delete("Goofy Ahh System One: archetype renamed");
+    console.log(`[${guild.name}] deleted retired role ${stale.name}`);
+  }
   const map = new Map<RoleKey, string>();
   for (const key of ALL_ROLE_KEYS) {
     const name = roleName(key);

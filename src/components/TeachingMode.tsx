@@ -158,7 +158,7 @@ export default function TeachingMode({
             {step === 4 && result && (
               <div className="space-y-4">
                 <p>
-                  No &ldquo;respond with one of neckbeard, stressed_dev, femboy, furry&rdquo;. No JSON mode. No parser. The response says{" "}
+                  No &ldquo;respond with one of {OPTIONS.map((o) => o.id).join(", ")}&rdquo;. No JSON mode. No parser. The response says{" "}
                   <code className="bg-yellow-200 px-1 font-mono">output_tokens: {result.outputTokens ?? 0}</code>.
                 </p>
                 <p>

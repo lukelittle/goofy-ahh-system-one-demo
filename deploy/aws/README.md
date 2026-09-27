@@ -134,6 +134,13 @@ read as a checklist.
 - **Safe deploys.** ECS runs exactly one bot (no overlap, so no double
   welcome messages), with a circuit breaker that rolls back a bad image.
   App Runner deploys blue/green.
+- **The public route defends itself.** `/api/classify` caps request bodies
+  at 13 MB while streaming (a forged `Content-Length` or chunked upload can't
+  buffer more), rate-limits to 10 requests a minute per IP and 40 overall
+  (the Circuit free tier is 60 a minute, shared with the bot), only accepts
+  image data URIs, and never forwards a URL for the server to fetch. The
+  site sends `nosniff`, `X-Frame-Options: DENY`, a referrer policy, a
+  permissions policy and HSTS, and hides `X-Powered-By`.
 - **Observable.** Container logs and VPC flow logs in CloudWatch with a
   retention you choose; every resource tagged for the bill.
 - **Reproducible and reviewable.** `terraform validate`, `terraform test`
